@@ -9,6 +9,7 @@ import { PORT } from "./constant";
 import db from "./db";
 import { BudgetsController } from "./controllers/budgets.controller";
 import { ErrorMiddleware } from "./middlewares/error.middleware";
+import { SnakeCaseInterceptor } from "./interceptors/snake-case.interceptor";
 import { buildSwaggerSpec } from "./swagger";
 
 const app = express();
@@ -19,6 +20,7 @@ app.use(helmet());
 useExpressServer(app, {
   controllers: [BudgetsController],
   middlewares: [ErrorMiddleware],
+  interceptors: [SnakeCaseInterceptor],
   defaultErrorHandler: false,
 });
 

@@ -9,3 +9,13 @@ export const convertKeysToCamel = (obj: Record<string, unknown>): Record<string,
 
 export const convertKeysToSnake = (obj: object): Record<string, unknown> =>
   Object.fromEntries(Object.entries(obj).map(([k, v]) => [camelToSnake(k), v]));
+
+export function deepConvertKeysToSnake(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(deepConvertKeysToSnake);
+  if (value && typeof value === "object") {
+    return Object.fromEntries(
+      Object.entries(value).map(([k, v]) => [camelToSnake(k), deepConvertKeysToSnake(v)]),
+    );
+  }
+  return value;
+}

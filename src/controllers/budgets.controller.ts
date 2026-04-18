@@ -1,7 +1,22 @@
-import { JsonController, Get, Post, Put, Delete, Param, Body, HttpCode, QueryParam } from "routing-controllers";
+import {
+  JsonController,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Param,
+  Body,
+  HttpCode,
+  QueryParam,
+} from "routing-controllers";
 import { OpenAPI } from "routing-controllers-openapi";
-import { getAllBudgets, getBudgetById, createNewBudget, updateBudgetById, deleteBudgetById } from "../services/budgets.service";
-import { convertKeysToSnake } from "../utils/case";
+import {
+  getAllBudgets,
+  getBudgetById,
+  createNewBudget,
+  updateBudgetById,
+  deleteBudgetById,
+} from "../services/budgets.service";
 import { CreateBudgetDto } from "../dtos/create-budget.dto";
 import { UpdateBudgetDto } from "../dtos/update-budget.dto";
 
@@ -10,42 +25,38 @@ import { UpdateBudgetDto } from "../dtos/update-budget.dto";
 export class BudgetsController {
   @Get("/")
   @OpenAPI({ summary: "List all budgets with pagination" })
-  async index(
-    @QueryParam("page") page = 1,
-    @QueryParam("limit") limit = 10,
-  ) {
-    const result = await getAllBudgets({ page, limit });
-    return {
-      data: result.data.map((b) => convertKeysToSnake(b)),
-      meta: convertKeysToSnake(result.meta),
-    };
+  async index(@QueryParam("page") page = 1, @QueryParam("limit") limit = 10) {
+    return getAllBudgets({ page, limit });
   }
 
   @Get("/:id")
   @OpenAPI({ summary: "Get a budget by ID" })
   async show(@Param("id") id: number) {
-    const budget = await getBudgetById(id);
-    return convertKeysToSnake(budget);
+    return getBudgetById(id);
   }
 
   @Post("/")
   @HttpCode(201)
   @OpenAPI({ summary: "Create a new budget" })
   async create(@Body({ validate: true }) body: CreateBudgetDto) {
-    const budget = await createNewBudget({
+    return createNewBudget({
       departmentId: body.department_id,
       fiscalYear: body.fiscal_year,
       amount: body.amount,
       currency: body.currency,
     });
-    return convertKeysToSnake(budget);
   }
 
   @Put("/:id")
   @OpenAPI({ summary: "Update a budget" })
-  async update(@Param("id") id: number, @Body({ validate: true }) body: UpdateBudgetDto) {
-    const budget = await updateBudgetById(id, { amount: body.amount, currency: body.currency });
-    return convertKeysToSnake(budget);
+  async update(
+    @Param("id") id: number,
+    @Body({ validate: true }) body: UpdateBudgetDto,
+  ) {
+    return updateBudgetById(id, {
+      amount: body.amount,
+      currency: body.currency,
+    });
   }
 
   @Delete("/:id")
